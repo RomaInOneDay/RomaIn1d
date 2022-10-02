@@ -20,7 +20,7 @@ def gstreamer_pipeline(
     capture_height=720,
     display_width=1280,
     display_height=720,
-    framerate=60,
+    framerate=30,
     flip_method=0,
 ):
     return (
@@ -44,16 +44,23 @@ def gstreamer_pipeline(
 
 
 # To flip the image, modify the flip_method parameter (0 and 2 are the most common)
-print(gstreamer_pipeline(flip_method=0))
+# print(gstreamer_pipeline(flip_method=0))
+
 cap = cv2.VideoCapture(gstreamer_pipeline(flip_method=0), cv2.CAP_GSTREAMER)
+# cap = cv2.VideoCapture('/dev/video0')
+#cap = cv2.VideoCapture("nvarguscamerasrc ! video/x-raw(memory:NVMM), width=(int)1920, height=(int)1080,format=(string)NV12, framerate=(fraction)30/1 ! nvvidconv ! video/x-raw, format=(string)BGRx ! videoconvert !  appsink")
 if cap.isOpened():
+    print("Opened")
     window_handle = cv2.namedWindow("CSI Camera", cv2.WINDOW_AUTOSIZE)
     # Window
     while cv2.getWindowProperty("CSI Camera", 0) >= 0:
+        # print("window set")
         ret, frame = cap.read()
         if ret:
+            print("got frame")
             # detection process
             objs = Object_detector.detect(frame)
+            # print("detected")
 
             # plotting
             for obj in objs:
